@@ -6,7 +6,10 @@ export enum UserRoles{
   ADMIN = "admin"
 }
 
-@Schema()
+@Schema({
+  versionKey: false,
+  timestamps: true,
+})
 export class User extends Document {
   @Prop({ type: String, required: true })
   name: string;

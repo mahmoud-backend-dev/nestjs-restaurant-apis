@@ -8,12 +8,15 @@ import { paginate } from 'src/utils/pagination';
 import { ApiFeatures } from 'src/utils/apiFeatures';
 import { CreateRestaurantDto } from './dto/create-restaurant.dto';
 import { User } from 'src/auth/schemas/user.schema';
+import { Meal } from 'src/meal/schemas/meal.schema';
 
 @Injectable()
 export class RestaurantService {
   constructor(
     @InjectModel(Restaurant.name)
     private restaurantModel: mongoose.Model<Restaurant>,
+    @InjectModel(Meal.name)
+    private mealModel: mongoose.Model<Meal>,
   ) {}
 
   // Get all restaurants => GET /restaurants
@@ -84,6 +87,7 @@ export class RestaurantService {
 
   // Delete a restaurant by id => DELETE /restaurants/:id
   async deleteOne(id: string): Promise<void> {
+    await this.mealModel.deleteMany({ restaurant: id });
     await this.restaurantModel.findByIdAndDelete(id);
   }
 

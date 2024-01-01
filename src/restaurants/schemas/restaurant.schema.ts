@@ -2,6 +2,7 @@ import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import * as mongoose  from "mongoose";
 import { Document } from "mongoose";
 import { User } from "src/auth/schemas/user.schema";
+import { Meal } from "src/meal/schemas/meal.schema";
 
 export enum Category {
   FAST_FOOD = 'Fast Food',
@@ -9,16 +10,18 @@ export enum Category {
   FINE_DINNING = 'Fine Dinning',
 }
 
-@Schema()
-export class Restaurant extends Document{
-
+@Schema({
+  versionKey: false,
+  timestamps: true,
+})
+export class Restaurant extends Document {
   @Prop({ required: true, length: { min: 3, max: 100 } })
   name: string;
 
   @Prop({ required: true, unique: true })
   email: string;
 
-  @Prop({ required: true , min:20})
+  @Prop({ required: true, min: 20 })
   description: string;
 
   @Prop({ required: true })
@@ -33,7 +36,10 @@ export class Restaurant extends Document{
   @Prop({ required: false })
   images: object[];
 
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
+  @Prop([{ type: mongoose.Schema.Types.ObjectId, ref: "Meal" }])
+  menu?: Meal[];
+
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: "User" })
   user: User;
 };
 
