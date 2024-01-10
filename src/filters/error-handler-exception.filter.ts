@@ -12,7 +12,7 @@ export class ErrorHandlerExceptionFilter implements ExceptionFilter {
     console.log()
     const customError: object = {
       message: exception.message || "Something went wrong try again later",
-      statusCode:exception['status'] || HttpStatus.INTERNAL_SERVER_ERROR
+      statusCode: exception['status'] || HttpStatus.INTERNAL_SERVER_ERROR
     };
     const response: Response = host.switchToHttp().getResponse<Response>();
     if (exception.name === "ValidationError") {
