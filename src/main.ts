@@ -1,6 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe, VersioningType } from '@nestjs/common';
+import { ErrorHandlerExceptionFilter } from './filters/error-handler-exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -16,6 +17,7 @@ async function bootstrap() {
       }
     }),
   );
+  app.useGlobalFilters(new ErrorHandlerExceptionFilter());
   await app.listen(1812);
 }
 bootstrap();
