@@ -31,14 +31,6 @@ export class ErrorHandlerExceptionFilter implements ExceptionFilter {
       customError["message"] = `No item found with id ${exception["value"]}`;
       customError["statusCode"] = HttpStatus.BAD_REQUEST;
     }
-    if (exception["name"] === "JsonWebTokenError") {
-      customError["message"] = `Invalid token, please login again...`;
-      customError["statusCode"] = HttpStatus.UNAUTHORIZED;
-    }
-    if (exception["name"] === "TokenExpiredError") {
-      customError["message"] = `Token expired, please login again...`;
-      customError["statusCode"] = HttpStatus.UNAUTHORIZED;
-    }
     if (process.env.NODE_ENV === "development")
       customError["stack"] = exception.stack;
     response.status(customError["statusCode"]).json(customError);

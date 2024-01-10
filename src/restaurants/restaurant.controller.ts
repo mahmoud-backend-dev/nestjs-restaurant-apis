@@ -6,17 +6,17 @@ import { UpdateRestaurantDto } from './dto/update-restaurant.dto';
 import { Query as expressQuery } from 'express-serve-static-core';
 
 import { FilesInterceptor } from '@nestjs/platform-express';
-import { AuthGuard } from '@nestjs/passport';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { User } from 'src/auth/schemas/user.schema';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
+import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
 
 @Controller({
   path: "restaurants",
   version: "1",
 })
-@UseGuards(AuthGuard(),RolesGuard)
+@UseGuards(JwtAuthGuard,RolesGuard)
 export class RestaurantController {
   constructor(private restaurantService: RestaurantService) {}
 
