@@ -1,13 +1,18 @@
-import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Meal } from './schemas/meal.schema';
-import mongoose, { Model } from 'mongoose';
-import { CreateMealDto } from './dto/create-meal.dto';
-import { Restaurant } from 'src/restaurants/schemas/restaurant.schema';
-import { User } from 'src/auth/schemas/user.schema';
-import { Query } from 'express-serve-static-core';
-import { paginate, paginateArray } from 'src/utils/pagination';
-import { UpdateMealDto } from './dto/update-meal.dto';
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from "@nestjs/common";
+import { InjectModel } from "@nestjs/mongoose";
+import { Meal } from "./schemas/meal.schema";
+import mongoose, { Model } from "mongoose";
+import { CreateMealDto } from "./dto/create-meal.dto";
+import { Restaurant } from "src/restaurants/schemas/restaurant.schema";
+import { User } from "src/auth/strategies/schemas/user.schema";
+import { Query } from "express-serve-static-core";
+import { paginate, paginateArray } from "src/utils/pagination";
+import { UpdateMealDto } from "./dto/update-meal.dto";
 
 @Injectable()
 export class MealService {
@@ -91,7 +96,11 @@ export class MealService {
   }
 
   // update a meal by id => PATCH /meals/:id
-  async updateOne(id: string, updateMealDto:UpdateMealDto,user:User): Promise<Meal> {
+  async updateOne(
+    id: string,
+    updateMealDto: UpdateMealDto,
+    user: User,
+  ): Promise<Meal> {
     const isValidId = mongoose.isValidObjectId(id);
     if (!isValidId) {
       throw new BadRequestException(`Invalid MongoId(ObjectId): ${id}`);
@@ -101,10 +110,12 @@ export class MealService {
       throw new NotFoundException(`Meal for this id: ${id} not found`);
     }
     if (meal.user.toString() !== user._id.toString())
-      throw new ForbiddenException('You can not update this meal.')
+      throw new ForbiddenException("You can not update this meal.");
 
     if (updateMealDto.restaurant) {
-      const restaurantExist = await this.restaurantModel.findById(updateMealDto.restaurant);
+      const restaurantExist = await this.restaurantModel.findById(
+        updateMealDto.restaurant,
+      );
       if (!restaurantExist)
         throw new NotFoundException(
           `Restaurant for this id: ${updateMealDto.restaurant} not found`,
@@ -114,7 +125,9 @@ export class MealService {
           `You are not authorized to add meal to this restaurant`,
         );
       const restaurant = await this.restaurantModel.findById(meal.restaurant);
-      restaurant.menu = restaurant.menu.filter((id) => id.toString() !== meal._id.toString());
+      restaurant.menu = restaurant.menu.filter(
+        (id) => id.toString() !== meal._id.toString(),
+      );
       await restaurant.save();
     }
     if (updateMealDto.name) meal.name = updateMealDto.name;
@@ -126,7 +139,7 @@ export class MealService {
   }
 
   // delete a meal by id => DELETE /meals/:id
-  async deleteOne(id: string,user:User): Promise<{}> {
+  async deleteOne(id: string, user: User): Promise<{}> {
     const isValidId = mongoose.isValidObjectId(id);
     if (!isValidId) {
       throw new BadRequestException(`Invalid MongoId(ObjectId): ${id}`);
@@ -136,9 +149,11 @@ export class MealService {
       throw new NotFoundException(`Meal for this id: ${id} not found`);
     }
     if (meal.user.toString() !== user._id.toString())
-      throw new ForbiddenException('You can not delete this meal.')
+      throw new ForbiddenException("You can not delete this meal.");
     const restaurant = await this.restaurantModel.findById(meal.restaurant);
-    restaurant.menu = restaurant.menu.filter((id) => id.toString() !== meal._id.toString());
+    restaurant.menu = restaurant.menu.filter(
+      (id) => id.toString() !== meal._id.toString(),
+    );
     await restaurant.save();
     await meal.deleteOne();
     return {

@@ -1,11 +1,21 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
-import { MealService } from './meal.service';
-import { CreateMealDto } from './dto/create-meal.dto';
-import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
-import { User } from 'src/auth/schemas/user.schema';
-import { Query as expressQuery} from 'express-serve-static-core';
-import { UpdateMealDto } from './dto/update-meal.dto';
-import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Query,
+  UseGuards,
+} from "@nestjs/common";
+import { MealService } from "./meal.service";
+import { CreateMealDto } from "./dto/create-meal.dto";
+import { CurrentUser } from "src/auth/decorators/current-user.decorator";
+import { User } from "src/auth/strategies/schemas/user.schema";
+import { Query as expressQuery } from "express-serve-static-core";
+import { UpdateMealDto } from "./dto/update-meal.dto";
+import { JwtAuthGuard } from "src/auth/guards/jwt.guard";
 
 @Controller({
   path: "meals",

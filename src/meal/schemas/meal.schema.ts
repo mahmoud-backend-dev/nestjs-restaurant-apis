@@ -1,13 +1,13 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import mongoose, { Document } from 'mongoose';
-import { User } from 'src/auth/schemas/user.schema';
-import { Restaurant } from 'src/restaurants/schemas/restaurant.schema';
+import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+import mongoose, { Document } from "mongoose";
+import { User } from "src/auth/strategies/schemas/user.schema";
+import { Restaurant } from "src/restaurants/schemas/restaurant.schema";
 
 export enum Category {
-  SOUPS = 'Soups',
-  SALADS = 'Salads',
-  SANDWICHES = 'Sandwiches',
-  PASTA = 'Pasta',
+  SOUPS = "Soups",
+  SALADS = "Salads",
+  SANDWICHES = "Sandwiches",
+  PASTA = "Pasta",
 }
 
 @Schema({
@@ -34,4 +34,4 @@ export class Meal extends Document {
   user: User;
 }
 
-export const MealSchema = SchemaFactory.createForClass(Meal)
+export const MealSchema = SchemaFactory.createForClass(Meal);

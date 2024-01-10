@@ -1,14 +1,18 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Restaurant } from './schemas/restaurant.schema';
-import * as mongoose from 'mongoose';
-import { UpdateRestaurantDto } from './dto/update-restaurant.dto';
-import { Query } from 'express-serve-static-core';
-import { paginate } from 'src/utils/pagination';
-import { ApiFeatures } from 'src/utils/apiFeatures';
-import { CreateRestaurantDto } from './dto/create-restaurant.dto';
-import { User } from 'src/auth/schemas/user.schema';
-import { Meal } from 'src/meal/schemas/meal.schema';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from "@nestjs/common";
+import { InjectModel } from "@nestjs/mongoose";
+import { Restaurant } from "./schemas/restaurant.schema";
+import * as mongoose from "mongoose";
+import { UpdateRestaurantDto } from "./dto/update-restaurant.dto";
+import { Query } from "express-serve-static-core";
+import { paginate } from "src/utils/pagination";
+import { ApiFeatures } from "src/utils/apiFeatures";
+import { CreateRestaurantDto } from "./dto/create-restaurant.dto";
+import { User } from "src/auth/strategies/schemas/user.schema";
+import { Meal } from "src/meal/schemas/meal.schema";
 
 @Injectable()
 export class RestaurantService {
@@ -46,10 +50,13 @@ export class RestaurantService {
   }
 
   // Add a restaurant => POST /restaurants
-  async create(restaurant: CreateRestaurantDto, user: User): Promise<Restaurant> {
+  async create(
+    restaurant: CreateRestaurantDto,
+    user: User,
+  ): Promise<Restaurant> {
     if (await this.restaurantModel.findOne({ email: restaurant.email }))
-      throw new BadRequestException('Email Duplicated choose anther email')
-    return await this.restaurantModel.create({ ...restaurant, user: user._id }); 
+      throw new BadRequestException("Email Duplicated choose anther email");
+    return await this.restaurantModel.create({ ...restaurant, user: user._id });
   }
 
   // Get a restaurant by id => GET /restaurants/:id
