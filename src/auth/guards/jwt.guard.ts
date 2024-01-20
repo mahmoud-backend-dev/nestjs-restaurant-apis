@@ -13,10 +13,10 @@ export class JwtAuthGuard extends AuthGuard() {
 
   // This method is called by passport if the token is valid and not expired
   handleRequest(err, user, info) {
-    if (info["name"] === "TokenExpiredError") {
+    if (info && info["name"] === "TokenExpiredError") {
       throw new UnauthorizedException(`Token expired, please login again...`);
     }
-    if (info["name"] === "JsonWebTokenError") {
+    if (info && info["name"] === "JsonWebTokenError") {
       throw new UnauthorizedException(`Invalid token, please login again...`);
     }
     return user;
