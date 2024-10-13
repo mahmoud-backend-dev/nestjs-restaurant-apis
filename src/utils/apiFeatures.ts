@@ -5,54 +5,50 @@ import { v4 as uuid } from "uuid";
 export class ApiFeatures {
   // Static method to upload files in AWS S3
   static async uploadFiles(files: Express.Multer.File[]): Promise<any> {
-    return new Promise((resolve, reject) => {
-      const s3 = new S3({
-        accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-      });
-      const images = [];
-      files.forEach(async (file) => {
-        const params = {
-          Bucket: `${process.env.AWS_S3_BUCKET_NAME}/restaurant`,
-          Key: `${uuid()}-${file.originalname}`,
-          Body: file.buffer,
-        };
-        const uploadedFile = await s3.upload(params).promise();
-        images.push(uploadedFile);
-        if (images.length === files.length) {
-          resolve(images);
-        }
-      })
-    })
-  };
+    const s3 = new S3({
+      accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+    });
+    const images = [];
+    for (const file of files) {
+      const params = {
+        Bucket: `${process.env.AWS_S3_BUCKET_NAME}/restaurant`,
+        Key: `${uuid()}-${file.originalname}`,
+        Body: file.buffer,
+      };
+      const uploadedFile = await s3.upload(params).promise();
+      images.push(uploadedFile);
+    }
+    return images;
+  }
 
   // Static method to delete files in AWS S3
-  static async deleteFiles(files: object[]): Promise<any> {
-    return new Promise((resolve, reject) => {
-      const s3 = new S3({
-        accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-      });
-      files.forEach(async (file) => {
+  static async deleteFiles(files: { Key: string }[]): Promise<boolean> {
+    const s3 = new S3({
+      accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+    });
+
+    try {
+      for (const file of files) {
         const params = {
-          Bucket: `${process.env.AWS_S3_BUCKET_NAME}`,
-          Key: file['Key'],
+          Bucket: process.env.AWS_S3_BUCKET_NAME!,
+          Key: file.Key,
         };
-        s3.deleteObject(params, (err, data) => {
-          if (err) {
-            reject(false);
-          }
-          resolve(true);
-        });
-      })
-    })
-  };
+        await s3.deleteObject(params).promise();
+      }
+      return true;
+    } catch (error) {
+      console.error(error);
+      return false;
+    }
+  }
 
   // static method to assign token to response
   static assignTokenToAuthorization(
     id: string,
-    jwtService:JwtService
+    jwtService: JwtService,
   ): string {
     return jwtService.sign({ id });
-  };
+  }
 }

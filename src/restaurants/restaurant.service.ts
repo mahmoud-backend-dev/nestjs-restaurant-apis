@@ -120,7 +120,7 @@ export class RestaurantService {
   }
 
   // delete images from AWS S3
-  async deleteImages(images: object[]): Promise<boolean> {
+  async deleteImages(images: { Key: string }[]): Promise<boolean> {
     if (images.length === 0) return true;
     const isDeleted = await ApiFeatures.deleteFiles(images);
     return isDeleted;
